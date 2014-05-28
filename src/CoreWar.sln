@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CoreWar", "CoreWar\CoreWar.fsproj", "{A0EEA7C6-316E-4D66-8CA0-FE7D1C7E1FA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{935F320D-246C-4F82-AF63-580880488C9A}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CoreWarTests", "CoreWarTests\CoreWarTests.fsproj", "{29FD718A-9EEC-4C73-BBB7-C37782DEAFB1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A0EEA7C6-316E-4D66-8CA0-FE7D1C7E1FA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0EEA7C6-316E-4D66-8CA0-FE7D1C7E1FA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0EEA7C6-316E-4D66-8CA0-FE7D1C7E1FA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0EEA7C6-316E-4D66-8CA0-FE7D1C7E1FA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29FD718A-9EEC-4C73-BBB7-C37782DEAFB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29FD718A-9EEC-4C73-BBB7-C37782DEAFB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29FD718A-9EEC-4C73-BBB7-C37782DEAFB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29FD718A-9EEC-4C73-BBB7-C37782DEAFB1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
