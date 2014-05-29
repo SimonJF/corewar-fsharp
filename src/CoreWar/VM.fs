@@ -194,15 +194,17 @@ let executeProcess core proc =
         | ADD -> applyOperation core (+) pc
                  incrementPC core proc
         | SUB -> applyOperation core (-) pc
-                 core 
+                 incrementPC core proc
         | MUL -> applyOperation core (*) pc
-                 core
-        | DIV -> if divCheck core pc then killProcess core proc
+                 incrementPC core proc
+        | DIV -> if divCheck core pc then let core' = killProcess core proc
+                                          incrementPC core' proc
                                      else applyOperation core (/) pc
-                                          core
-        | MOD -> if divCheck core pc then killProcess core proc
+                                          incrementPC core proc
+        | MOD -> if divCheck core pc then let core' = killProcess core proc
+                                          incrementPC core' proc
                                      else applyOperation core (%) pc
-                                          core
+                                          incrementPC core proc
         | NOP -> incrementPC core proc
         | JMP -> doJump core proc instr
         | _ -> printfn "Warning: instruction %A not supported." instr.Instruction
