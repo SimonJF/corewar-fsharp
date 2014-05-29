@@ -27,7 +27,7 @@ let rec coreLoop core =
 
 [<EntryPoint>]
 let main argv = 
-    let core = initialCore 20
+    let core = initialCore 24
     let populated_core = 
         List.fold (fun core' prog -> parseAndAddWarrior core' prog) core
             (Array.toList argv)

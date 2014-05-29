@@ -98,6 +98,8 @@ let addWarrior core warrior =
     { core with Processes = new_process :: core.Processes ; 
                 RunningPID = core.RunningPID + 1 }
 
+/// Resolves a reference. That is, given a PC and a location, will return the
+/// address referred to by the location, be it direct, indirect or immediate.
 let resolveRef core pc loc = 
     let direct_res = (pc + loc.Value) % core.Memory.Length
     match loc.AddrMode with
@@ -111,33 +113,25 @@ let resolveRef core pc loc =
 
 /// Apply a numeric operation.
 let applyOperation core op pc = 
-    let instr = core.Memory.[pc]
-    (* I *think* that resolution will take care of this...
-    match (instr.Loc1.AddrMode, instr.Loc2.AddrMode) with
-        | (_, Immediate) -> // Put result in B-field
-            let a_instr_addr = resolveRef core pc instr.Loc1
-            let a_instr = getInstruction core a_instr_addr
-            let new_b_val = op a_instr.Loc1.Value instr.Loc2.Value
-            let new_b = { instr with Loc2 = { a_instr.Loc2 with Value = new_b_val } } 
-            setInstruction core pc new_b |> ignore
-        | (Immediate, _) -> // Put result in B-field of destination
-            let dest_addr = resolveRef core pc instr.Loc2
-            let dest_instr = getInstruction core dest_addr
-            let new_b_val = op instr.Loc1.Value dest_instr.Loc2.Value
-            let new_b = { dest_instr with Loc2 = { dest_instr.Loc2 with Value = new_b_val } }
-            setInstruction core dest_addr new_b |> ignore
-            
-        | (_, _) -> // Both A and B fields are added together, result put in loc of B field
-        *)
-            // Resolve references for both A and B fields.
+    let instr = getInstruction core pc
+    // Resolve references for both A and B fields.
     let src_addr = resolveRef core pc instr.Loc1
     let dest_addr = resolveRef core pc instr.Loc2
     let src = getInstruction core src_addr
     let dest = getInstruction core dest_addr
 
-    // Now get the new values by applying the operations
-    let new_a_val = op (src.Loc1.Value) (dest.Loc1.Value)
-    let new_b_val = op (src.Loc2.Value) (dest.Loc2.Value)
+    // Now get the new values by applying the operations.
+    // Only update the A field if *both* fields are references (not immediate)
+    let new_a_val = 
+        if instr.Loc1.AddrMode = Immediate || instr.Loc2.AddrMode = Immediate then 
+            dest.Loc1.Value 
+        else
+            op (src.Loc1.Value) (dest.Loc1.Value)
+    let new_b_val = 
+        if instr.Loc1.AddrMode = Immediate || instr.Loc2.AddrMode = Immediate then
+            op (src.Loc1.Value) (dest.Loc2.Value) // src will = dest in this case, but we use Loc1
+        else 
+            op (src.Loc2.Value) (dest.Loc2.Value)
 
     // Make new locations and update the dest instruction
     let new_a_loc = { src.Loc1 with Value = new_a_val }
@@ -177,6 +171,11 @@ let incrementPC core proc =
     let proc' = { proc with PC = (proc.PC + 1) % core.Memory.Length }
     updateProcess core proc.PID proc'
 
+let doJump core proc instr =
+    let new_pc = (proc.PC + instr.Loc1.Value) % core.Memory.Length
+    let new_proc = { proc with PC = new_pc }
+    updateProcess core proc.PID new_proc
+
 
 /// Executes a process on the core.
 /// If the core tries to execute a DAT instruction or /0, then it is
@@ -205,6 +204,7 @@ let executeProcess core proc =
                                      else applyOperation core (%) pc
                                           core
         | NOP -> incrementPC core proc
+        | JMP -> doJump core proc instr
         | _ -> printfn "Warning: instruction %A not supported." instr.Instruction
                incrementPC core proc
 
